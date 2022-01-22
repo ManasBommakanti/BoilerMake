@@ -8,34 +8,35 @@ import numpy as np
 all_data = {'United States': 840, 'China': 156, 'United Kingdom': 826, 'India': 356, 'Russia': 643}
 year = list(range(1950, 2021, 10))
 
-
-# Define the remote URL
-country = input().title()
-year_selected = int(input())
-year_index = year.index(year_selected)
 # Creating instance of the figure
 fig = gp.Figure()
 graph_data = []
 for x in year:
-    url = "https://www.populationpyramid.net/api/pp/" + str(all_data[country]) + "/" + str(x) + "/?csv=true"
-    # Send HTTP GET request via requests
-    data = requests.get(url)
-    # Convert to iterator by splitting on \n chars
-    lines = data.text.splitlines()
-    # Parse as CSV object
-    reader = csv.reader(lines)
-    y_age, x_M, x_F = [], [], []
-    # View Result
-    for row in reader:
-        if row[1] != "M" and row[2] != "F":
-            row[1] = int(row[1])
-            row[2] = int(row[2])
-            row.append(x)
+    for country in all_data:
+        print(country + " " + str(x))
+        url = "https://www.populationpyramid.net/api/pp/" + str(all_data[country]) + "/" + str(x) + "/?csv=true"
+        # Send HTTP GET request via requests
+        data = requests.get(url)
+        # Convert to iterator by splitting on \n chars
+        lines = data.text.splitlines()
+        # Parse as CSV object
+        reader = csv.reader(lines)
+        y_age, x_M, x_F = [], [], []
+        # View Result
+        for row in reader:
+            if row[1] != "M" and row[2] != "F":
+                row[1] = int(row[1])
+                row[2] = int(row[2])
+                row.append(x)
 
-            y_age.append(row[0])
-            x_M.append(int(row[1]))
-            x_F.append(int(row[2]) * -1)
-    graph_data.append([y_age, x_M, x_F, x])
+                y_age.append(row[0])
+                x_M.append(int(row[1]))
+                x_F.append(int(row[2]) * -1)
+        graph_data.append([y_age, x_M, x_F, x])
+
+country = input().title()
+year_selected = int(input())
+year_index = year.index(year_selected)
 
 print(year_index)
 # Adding Male data to the figure
@@ -59,6 +60,4 @@ fig.update_layout(title=graph_title,
                              title='Population in Millions',
                              title_font_size=14)
                   )
-
-
 fig.show()
