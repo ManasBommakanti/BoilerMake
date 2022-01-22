@@ -19,11 +19,9 @@ for x in year:
 
     # View Result
     for row in reader:
-        if row[1] != "M":
+        if row[1] != "M" and row[2] != "F":
             row[1] = int(row[1])
-
-        if row[2] != "F":
             row[2] = int(row[2])
+            row.append(x)
+            print(row)
 
-
-        print(row)
