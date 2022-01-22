@@ -1,6 +1,7 @@
 import http.client
 import numpy as np
 from PIL import Image
+from numpy import*
 
 class Conv:
     # Convolution layer
@@ -13,7 +14,7 @@ class Conv:
         self.filters = np.random.randn(num_filters, 3, 3) / 9
 
     def iterate_regions(self, image):
-        h, w = image.shape
+        h, w, c = image.shape
 
         for i in range(h - 2):
             for j in range(w - 2):
@@ -21,7 +22,7 @@ class Conv:
                 yield im_region, i, j
 
     def forward(self, input):
-        h, w = input.shape
+        h, w, c = input.shape
         output = np.zeros((h - 2, w - 2, self.num_filters))
 
         for im_region, i, j in self.iterate_regions(input):
@@ -38,8 +39,13 @@ conn.request("GET", "/v1/breeds?attach_breed=0", headers=headers)
 
 res = conn.getresponse()
 data = res.read()
-print(data.decode("utf-8"))
+# print(data.decode("utf-8"))
 
 img = Image.open('apple_test.jpeg')
 imgGray = img.convert('L')
+imgGrayArray = array(img)
 imgGray.save('test_gray.jpg')
+
+conv = Conv(3)
+print(conv.forward(imgGrayArray).shape)
+
