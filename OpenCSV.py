@@ -6,6 +6,7 @@ import pandas as pi
 import numpy as np
 
 all_data = {'United States': 840, 'China': 156, 'United Kingdom': 826, 'India': 356, 'Russia': 643}
+countries = ["United States", "China", "United Kingdom", "India", "Russia"]
 year = list(range(1950, 2021, 10))
 
 # Creating instance of the figure
@@ -14,7 +15,6 @@ graph_data = []
 count = 0
 for x in year:
     for country in all_data:
-        print(country + " " + str(x))
         url = "https://www.populationpyramid.net/api/pp/" + str(all_data[country]) + "/" + str(x) + "/?csv=true"
         # Send HTTP GET request via requests
         data = requests.get(url)
@@ -33,40 +33,42 @@ for x in year:
                 y_age.append(row[0])
                 x_M.append(int(row[1]))
                 x_F.append(int(row[2]) * -1)
-        graph_data.append([y_age, x_M, x_F, x])
+        graph_data.append([y_age, x_M, x_F, x, country])
 
 print("Would you like to begin the program? (y/n)")
 response = input().lower()
+
 while response == "y":
     print("Enter a country: ")
     country = input().title()
     print("Enter a year: ")
     year_selected = int(input())
+    country_index = countries.index(country)
     year_index = year.index(year_selected)
 
-    print(year_index)
     # Adding Male data to the figure
+    print(graph_data[year_index][0])
     if count == 0:
-        fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][1],
+        fig.add_trace(gp.Bar(y=graph_data[year_index * 5 + country_index][0], x=graph_data[year_index * 5 + country_index][1],
                              name='Male',
                              orientation='h'))
 
         # Adding Female data to the figure
-        fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][2],
+        fig.add_trace(gp.Bar(y=graph_data[year_index * 5 + country_index][0], x=graph_data[year_index * 5 + country_index][2],
                              name='Female', orientation='h'))
         graph_title = 'Population Pyramid of ' + country + ' - ' + str(year_selected)
     else:
         fig = gp.FigureWidget()
-        fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][1],
+        fig.add_trace(gp.Bar(y=graph_data[year_index * 5 + country_index][0], x=graph_data[year_index * 5 + country_index][1],
                              name='Male',
                              orientation='h'))
 
         # Adding Female data to the figure
-        fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][2],
+        fig.add_trace(gp.Bar(y=graph_data[year_index * 5 + country_index][0], x=graph_data[year_index * 5 + country_index][2],
                              name='Female', orientation='h'))
         graph_title = 'Population Pyramid of ' + country + ' - ' + str(year_selected)
     fig.update_layout(title=graph_title,
-                      title_font_size=22, barmode='relative',
+                      title_font_size=22, barmode='overlay',
                       bargap=0.0, bargroupgap=0,
                       xaxis=dict(tickvals=[-60000000, -40000000, -20000000,
                                            0, 20000000, 40000000, 60000000],
