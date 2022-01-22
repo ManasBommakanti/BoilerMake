@@ -1,7 +1,9 @@
 import http.client
 import numpy as np
+import mnist
 from PIL import Image
-from numpy import*
+from numpy import *
+
 
 class Conv:
     # Convolution layer
@@ -26,26 +28,19 @@ class Conv:
         output = np.zeros((h - 2, w - 2, self.num_filters))
 
         for im_region, i, j in self.iterate_regions(input):
-            output[i, j] = np.sum(im_region * self.filters, axis=(1, 2))
+            #print(str(im_region) + " " + str(i) + " " + str(j))
+            #print(im_region)
+            #print(self.filters)
+            #print(mult)
+            output[i, j] = np.dot(im_region, self.filters).sum()
 
         return output
 
 
-conn = http.client.HTTPSConnection("api.thedogapi.com")
-
-headers = { 'x-api-key': "9207caa6-f2dc-4493-8d61-5cf3ad0e3c3f" }
-
-conn.request("GET", "/v1/breeds?attach_breed=0", headers=headers)
-
-res = conn.getresponse()
-data = res.read()
-# print(data.decode("utf-8"))
-
 img = Image.open('apple_test.jpeg')
+img = img.resize((28, 28))
 imgGray = img.convert('L')
 imgGrayArray = array(img)
-imgGray.save('test_gray.jpg')
 
-conv = Conv(3)
+conv = Conv(8)
 print(conv.forward(imgGrayArray).shape)
-
