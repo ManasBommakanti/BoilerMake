@@ -16,6 +16,14 @@ for x in year:
     # Parse as CSV object
     reader = csv.reader(lines)
 
+
     # View Result
     for row in reader:
+        if row[1] != "M":
+            row[1] = int(row[1])
+
+        if row[2] != "F":
+            row[2] = int(row[2])
+
+
         print(row)
