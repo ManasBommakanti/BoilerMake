@@ -56,6 +56,7 @@ while response == "y":
                              name='Female', orientation='h'))
         graph_title = 'Population Pyramid of ' + country + ' - ' + str(year_selected)
     else:
+        fig = gp.FigureWidget()
         fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][1],
                              name='Male',
                              orientation='h'))
