@@ -1,4 +1,4 @@
-# BoilerMake - BRUH
+# BoilerMake - Diverse Indians
 BoilerMake 2022 Hackathon
 
 Contributers 
