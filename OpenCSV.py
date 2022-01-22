@@ -9,8 +9,9 @@ all_data = {'United States': 840, 'China': 156, 'United Kingdom': 826, 'India': 
 year = list(range(1950, 2021, 10))
 
 # Creating instance of the figure
-fig = gp.Figure()
+fig = gp.FigureWidget()
 graph_data = []
+count = 0
 for x in year:
     for country in all_data:
         print(country + " " + str(x))
@@ -34,30 +35,49 @@ for x in year:
                 x_F.append(int(row[2]) * -1)
         graph_data.append([y_age, x_M, x_F, x])
 
-country = input().title()
-year_selected = int(input())
-year_index = year.index(year_selected)
+print("Would you like to begin the program? (y/n)")
+response = input().lower()
+while response == "y":
+    print("Enter a country: ")
+    country = input().title()
+    print("Enter a year: ")
+    year_selected = int(input())
+    year_index = year.index(year_selected)
 
-print(year_index)
-# Adding Male data to the figure
-fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][1],
-                     name='Male',
-                     orientation='h'))
+    print(year_index)
+    # Adding Male data to the figure
+    if count == 0:
+        fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][1],
+                             name='Male',
+                             orientation='h'))
 
-# Adding Female data to the figure
-fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][2],
-                     name='Female', orientation='h'))
+        # Adding Female data to the figure
+        fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][2],
+                             name='Female', orientation='h'))
+        graph_title = 'Population Pyramid of ' + country + ' - ' + str(year_selected)
+    else:
+        fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][1],
+                             name='Male',
+                             orientation='h'))
 
-# Updating the layout for our graph
-graph_title = 'Population Pyramid of ' + country + ' - ' + str(year_selected)
-fig.update_layout(title=graph_title,
-                  title_font_size=22, barmode='relative',
-                  bargap=0.0, bargroupgap=0,
-                  xaxis=dict(tickvals=[-60000000, -40000000, -20000000,
-                                       0, 20000000, 40000000, 60000000],
-                             ticktext=['6M', '4M', '2M', '0',
-                                       '2M', '4M', '6M'],
-                             title='Population in Millions',
-                             title_font_size=14)
-                  )
-fig.show()
+        # Adding Female data to the figure
+        fig.add_trace(gp.Bar(y=graph_data[year_index][0], x=graph_data[year_index][2],
+                             name='Female', orientation='h'))
+        graph_title = 'Population Pyramid of ' + country + ' - ' + str(year_selected)
+    fig.update_layout(title=graph_title,
+                      title_font_size=22, barmode='relative',
+                      bargap=0.0, bargroupgap=0,
+                      xaxis=dict(tickvals=[-60000000, -40000000, -20000000,
+                                           0, 20000000, 40000000, 60000000],
+                                 ticktext=['6M', '4M', '2M', '0',
+                                           '2M', '4M', '6M'],
+                                 title='Population in Millions',
+                                 title_font_size=14)
+                      )
+    fig.show()
+    # Updating the layout for our graph
+
+    count += 1
+    print("Would you like to continue?(y/n)")
+    response = input().lower()
+
