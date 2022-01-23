@@ -6,6 +6,7 @@ import pandas as pd
 
 import datapane as dp
 import matplotlib.pyplot as plt
+import ClassifyStage as cs
 import ipywidgets as widgets
 from IPython.display import display
 from ipywidgets import interact, interactive, fixed, interact_manual
@@ -60,6 +61,7 @@ def f(country, year):
             x_M.append(int(row[1]))
             x_F.append(int(row[2]) * 1)
     graph_data = {'Age': y_age, "Male": x_M, "Female": x_F, "Year": str(year)}
+    stage = cs.stage(graph_data)
 
     # print(graph_data)
 
@@ -88,7 +90,7 @@ def f(country, year):
     # specify background color and plot title
     fig.patch.set_facecolor('xkcd:light grey')
     # print(y)
-    plt.figtext(.5, 0.95, "Population Pyramid for " + country + " " + str(year) , fontsize=13, ha='center')
+    plt.figtext(.5, 0.95, "Population Pyramid for " + country + " " + str(year) + " (Stage: " + str(stage) + ")", fontsize=13, ha='center')
 
     # define male and female bars
     axes[0].barh(y, x_male, align='center', color='royalblue')
