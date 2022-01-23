@@ -1,3 +1,4 @@
+import matplotlib
 import numpy as np
 import csv
 import requests
@@ -21,11 +22,23 @@ all_data = {'United States': 840, 'China': 156, 'United Kingdom': 826, 'India': 
 
 # @widgets.interact( x = ["United States", "India", "Russia", "China", "United Kingdom"], y = ["1950", "1960", "1970", "1980", "1990", "2000", "2010", "2020"])
 
+def move_figure(f, x, y):
+    """Move figure's upper left corner to pixel (x, y)"""
+    backend = matplotlib.get_backend()
+    if backend == 'TkAgg':
+        f.canvas.manager.window.wm_geometry("+%d+%d" % (x, y))
+    elif backend == 'WXAgg':
+        f.canvas.manager.window.SetPosition((x, y))
+    else:
+        # This works for QT and GTK
+        # You can also use window.setGeometry
+        f.canvas.manager.window.move(x, y)
 
-def f(x, y):
+
+def f(country, year):
 
     # print(x + " " + str(y))
-    url = "https://www.populationpyramid.net/api/pp/" + str(all_data[x]) + "/" + str(y) + "/?csv=true"
+    url = "https://www.populationpyramid.net/api/pp/" + str(all_data[country]) + "/" + str(year) + "/?csv=true"
     # Send HTTP GET request via requests
     data = requests.get(url)
 
@@ -41,14 +54,14 @@ def f(x, y):
         if row[1] != "M" and row[2] != "F":
             row[1] = int(row[1])
             row[2] = int(row[2])
-            row.append(str(y))
+            row.append(str(year))
 
             y_age.append(row[0])
             x_M.append(int(row[1]))
             x_F.append(int(row[2]) * 1)
-    graph_data = {'Age': y_age, "Male": x_M, "Female": x_F, "Year": str(y)}
+    graph_data = {'Age': y_age, "Male": x_M, "Female": x_F, "Year": str(year)}
 
-    print(graph_data)
+    # print(graph_data)
 
     # create dataframe
     # df = pd.DataFrame({'Age': ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80-89', '90+'],
@@ -69,9 +82,13 @@ def f(x, y):
     # define plot parameters
     fig, axes = plt.subplots(ncols=2, sharey=True, figsize=(9, 6))
 
+    move_figure(fig, 600, 90)
+
+
     # specify background color and plot title
     fig.patch.set_facecolor('xkcd:light grey')
-    plt.figtext(.5, .9, "Population Pyramid ", fontsize=15, ha='center')
+    # print(y)
+    plt.figtext(.5, 0.95, "Population Pyramid for " + country + " " + str(year) , fontsize=13, ha='center')
 
     # define male and female bars
     axes[0].barh(y, x_male, align='center', color='royalblue')
