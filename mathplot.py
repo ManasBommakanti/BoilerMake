@@ -13,8 +13,8 @@ all_data = {'United States': 840, 'China': 156, 'United Kingdom': 826, 'India': 
 
 
 
-country = input("Enter country: ")
-year = int(input("Enter decade between 1950 and 2020: "))
+# country = input("Enter country: ")
+# year = int(input("Enter decade between 1950 and 2020: "))
 
 
 
@@ -89,4 +89,4 @@ def f(x, y):
     plt.show()
 
 
-f(country, year)
+# f(country, year)
