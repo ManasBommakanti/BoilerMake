@@ -4,6 +4,38 @@ import plotly.graph_objects as gp
 import plotly.express as px
 import pandas as pi
 import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+
+
+def stage_classifier(summary):
+    print(summary)
+    total_pop = 0
+    summary_prop = [0, 0, 0, 0, 0]
+    for i in summary:
+        total_pop += i
+    for i in range(len(summary)):
+        summary_prop[i] = summary[i] / total_pop
+    slopes = [0, 0, 0, 0]
+    for i in range(len(slopes)):
+        slopes[i] = summary_prop[i + 1] - summary_prop[i]
+    slope_of_slopes = [0, 0, 0]
+    for j in range(len(slope_of_slopes)):
+        slope_of_slopes[j] = slopes[j + 1] - slopes[j]
+
+    threshold = 0.075
+    if summary_prop[0] >= .5:
+        return 1
+    if abs(slope_of_slopes[0]) < threshold:
+        if abs(slope_of_slopes[1]) < threshold:
+            if abs(slope_of_slopes[2]) < threshold:
+                return 2
+    for i in slope_of_slopes:
+        if i - threshold > 0:
+            return 3
+    return 4
+
+
 
 all_data = {'United States': 840, 'China': 156, 'United Kingdom': 826, 'India': 356, 'Russia': 643}
 countries = ["United States", "China", "United Kingdom", "India", "Russia"]
@@ -12,7 +44,6 @@ year = list(range(1950, 2021, 10))
 # Creating instance of the figure
 fig = gp.FigureWidget()
 graph_data = []
-count = 0
 for x in year:
     for country in all_data:
         url = "https://www.populationpyramid.net/api/pp/" + str(all_data[country]) + "/" + str(x) + "/?csv=true"
@@ -47,40 +78,23 @@ while response == "y":
     year_index = year.index(year_selected)
 
     # Adding Male data to the figure
-    print(graph_data[year_index][0])
-    if count == 0:
-        fig.add_trace(gp.Bar(y=graph_data[year_index * 5 + country_index][0], x=graph_data[year_index * 5 + country_index][1],
-                             name='Male',
-                             orientation='h'))
 
-        # Adding Female data to the figure
-        fig.add_trace(gp.Bar(y=graph_data[year_index * 5 + country_index][0], x=graph_data[year_index * 5 + country_index][2],
-                             name='Female', orientation='h'))
-        graph_title = 'Population Pyramid of ' + country + ' - ' + str(year_selected)
-    else:
-        fig = gp.FigureWidget()
-        fig.add_trace(gp.Bar(y=graph_data[year_index * 5 + country_index][0], x=graph_data[year_index * 5 + country_index][1],
-                             name='Male',
-                             orientation='h'))
-
-        # Adding Female data to the figure
-        fig.add_trace(gp.Bar(y=graph_data[year_index * 5 + country_index][0], x=graph_data[year_index * 5 + country_index][2],
-                             name='Female', orientation='h'))
-        graph_title = 'Population Pyramid of ' + country + ' - ' + str(year_selected)
-    fig.update_layout(title=graph_title,
-                      title_font_size=22, barmode='overlay',
-                      bargap=0.0, bargroupgap=0,
-                      xaxis=dict(tickvals=[-60000000, -40000000, -20000000,
-                                           0, 20000000, 40000000, 60000000],
-                                 ticktext=['6M', '4M', '2M', '0',
-                                           '2M', '4M', '6M'],
-                                 title='Population in Millions',
-                                 title_font_size=14)
-                      )
-    fig.show()
+    five_num_summary = [0, 0, 0, 0, 0]
+    for i in range(len(graph_data[year_index * 5 + country_index][0])):
+        sum = graph_data[year_index * 5 + country_index][1][i] - graph_data[year_index * 5 + country_index][2][i]
+        if 0 <= i <= 3:
+            five_num_summary[0] += sum
+        elif 4 <= i <= 7:
+            five_num_summary[1] += sum
+        elif 8 <= i <= 11:
+            five_num_summary[2] += sum
+        elif 12 <= i <= 15:
+            five_num_summary[3] += sum
+        else:
+            five_num_summary[4] += sum
+    print(stage_classifier(five_num_summary))
     # Updating the layout for our graph
 
-    count += 1
     print("Would you like to continue?(y/n)")
     response = input().lower()
 
