@@ -40,6 +40,10 @@ https://populationeducation.org/what-demographic-transition-model/
 
 Make sure to git clone this repository. After cloning, make sure all mentioned packages are installed and the program is ready for use!
 
+## Video Presentation
+
+https://youtu.be/M-KCBHvYIas
+
 ## Contributors 
 - Manas Bommakanti
 - Aryan Jain
