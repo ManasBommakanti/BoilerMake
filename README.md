@@ -1,4 +1,4 @@
-# BoilerMake 2022 Hackathon - Diverse Indians
+# BoilerMake 2022 Hackathon
 
 ## Introduction
 
